@@ -12,7 +12,11 @@ lex.yy.c: $(FLEX)
 y.tab.c: $(YACC)
 	yacc $(YACC)
 
+output: $(YACC)
+	yacc -v $(YACC) && rm y.tab.c
+
 clean:
-	rm y.tab.c
-	rm lex.yy.c
-	rm $(EXECUTABLE)
+	-rm y.tab.c
+	-rm lex.yy.c
+	-rm $(EXECUTABLE)
+	-rm y.output

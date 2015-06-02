@@ -29,6 +29,9 @@
 %token CAT                                          /* Functions over strings */
 %token PRINT PROMPT                                 /* IO functions */
 
+
+%start program
+
 %%
 
 program           : '(' BEGINPRGM  
