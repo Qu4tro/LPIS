@@ -1,4 +1,19 @@
 %{
+/* #include "hashtable.h" */
+#include "var.h"
+#include "error.h"
+
+int yylex();
+int yylineno;
+
+int yyerror(char *s) {
+    fprintf(stderr, "%s, line %d\n", s, yylineno);
+    return 0;
+}
+
+
+Vars* vars = NULL;
+ERROR error_flag;
 
 %}
 
@@ -29,6 +44,8 @@
 %token CAT                                          /* Functions over strings */
 %token PRINT PROMPT                                 /* IO functions */
 
+/* %type int function */
+
 
 %start program
 
@@ -41,13 +58,19 @@ program           : '(' BEGINPRGM
 
                   ;
 
-declarations      : 
+declarations      :
                   | declarations declaration
                   ;
 
-declaration       : '(' INTEGER id ')'
-                  | '(' STRING id  ')'
-                  | '(' ARRAY integer id ')'
+declaration       : '(' INTEGER id ')'          {if ((error_flag = add_variable(&vars, $3, 0)) < 0){
+                                                    handle_error(error_flag, yylineno);
+                                                }}
+                  | '(' STRING id  ')'          {if ((error_flag = add_variable(&vars, $3, 1)) < 0){
+                                                    handle_error(error_flag, yylineno);
+                                                }}
+                  | '(' ARRAY integer id ')'    {if ((error_flag = add_variable(&vars, $4, 2)) < 0){
+                                                    handle_error(error_flag, yylineno);
+                                                }}
                   ;
 
 statements        : statement
@@ -57,8 +80,8 @@ statements        : statement
 statement         : '(' function arguments ')'
                   ;
 
-function          : SET
-                  | WHILE
+function          : SET                         
+                  | WHILE                    
                   | COND
                   | PLUS 
                   | MINUS
@@ -86,7 +109,7 @@ arguments         :
                   ;
 
 argument          : statement
-                  | id
+                  | id                          
                   | integer
                   | string
                   | boolean
@@ -100,11 +123,6 @@ boolean           : TRUE_VALUE
 %%
 
 #include "lex.yy.c"
-
-int yyerror(char *s) {
-    fprintf(stderr, "%s, line %d\n", s, yylineno);
-    return 0;
-}
 
 
 int main(int argc, char* argv[]){
