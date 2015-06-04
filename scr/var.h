@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "error.h"
+#include "types.h"
 
 typedef struct s_vars {
     char* name;
-    int type;
+    type type;
     struct s_vars* prox;
 } Vars;
 
