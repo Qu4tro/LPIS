@@ -2,9 +2,12 @@
 #include "var.h"
 #include "error.h"
 #include "types.h"
+#include "utils.h"
 
 int yylex();
 int yylineno;
+
+char* code = NULL;
 
 int yyerror(char *s) {
     fprintf(stderr, "%s, line %d\n", s, yylineno);
@@ -58,7 +61,7 @@ type args[100];
 program           : '(' BEGINPRGM  
                          '(' DECLARE declarations ')'   
                          '(' STATEMENTS statements ')' 
-                    ')'
+                    ')'                                  {code = add_instr(code, "START");}                              
 
                   ;
 
@@ -133,5 +136,6 @@ boolean           : TRUE_VALUE
 
 int main(int argc, char* argv[]){
     yyparse();
+    printf("%s\n", code);
     return 0;
 }
