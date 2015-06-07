@@ -15,12 +15,18 @@ Vars* vars = NULL;
 ERROR error_flag;
 
 type arg_type;
+
+int arg_i = 0;
+type args[100];
+
+
 %}
 
 %union {
     int    vali;
     char*  vals;
     type   var_type;
+    type*  args_types;
     /* double vald; */
 }
 
@@ -43,8 +49,6 @@ type arg_type;
 %token CAT                                          /* Functions over strings */
 %token PRINT PROMPT                                 /* IO functions */
 
-%type <var_type> argument
-%type <var_type> statement
 %type <var_type> function
 
 %start program
@@ -77,45 +81,45 @@ statements        : statement
                   | statements statement
                   ;
 
-statement         : '(' function arguments ')'          {$$ = $2;}
+statement         : '(' function arguments ')'          
                   ;
 
-function          : SET                                 {$$ = NO_TYPE;}
-                  | WHILE                               {$$ = NO_TYPE;}
-                  | COND                                {$$ = NO_TYPE;}
-                  | PLUS                                {$$ = INTEGER_TYPE;}
-                  | MINUS                               {$$ = INTEGER_TYPE;}
-                  | MULT                                {$$ = INTEGER_TYPE;}
-                  | DIV                                 {$$ = INTEGER_TYPE;}
-                  | MOD                                 {$$ = INTEGER_TYPE;}
-                  | LESS                                {$$ = BOOLEAN_TYPE;}
-                  | LESSEQ                              {$$ = BOOLEAN_TYPE;}
-                  | EQ                                  {$$ = BOOLEAN_TYPE;}
-                  | DIFF                                {$$ = BOOLEAN_TYPE;}
-                  | GREATER                             {$$ = BOOLEAN_TYPE;}
-                  | GREATEREQ                           {$$ = BOOLEAN_TYPE;}
-                  | AND                                 {$$ = BOOLEAN_TYPE;}
-                  | OR                                  {$$ = BOOLEAN_TYPE;}
-                  | NOT                                 {$$ = BOOLEAN_TYPE;}
-                  | GET                                 {$$ = INTEGER_TYPE;}
-                  | LEN                                 {$$ = INTEGER_TYPE;}
-                  | CAT                                 {$$ = STRING_TYPE;}
-                  | PRINT                               {$$ = NO_TYPE;}
-                  | PROMPT                              {$$ = NO_TYPE;}
+function          : SET                                 {$$ = SET_ID;       }
+                  | WHILE                               {$$ = WHILE_ID;     }
+                  | COND                                {$$ = COND_ID;      }
+                  | PLUS                                {$$ = PLUS_ID;      }
+                  | MINUS                               {$$ = MINUS_ID;     }
+                  | MULT                                {$$ = MULT_ID;      }
+                  | DIV                                 {$$ = DIV_ID;       }
+                  | MOD                                 {$$ = MOD_ID;       }
+                  | LESS                                {$$ = LESS_ID;      }
+                  | LESSEQ                              {$$ = LESSEQ_ID;    }
+                  | EQ                                  {$$ = EQ_ID;        }
+                  | DIFF                                {$$ = DIFF_ID;      }
+                  | GREATER                             {$$ = GREATER_ID;   }
+                  | GREATEREQ                           {$$ = GREATEREQ_ID; }
+                  | AND                                 {$$ = AND_ID;       }
+                  | OR                                  {$$ = OR_ID;        }
+                  | NOT                                 {$$ = NOT_ID;       }
+                  | GET                                 {$$ = GET_ID;       }
+                  | LEN                                 {$$ = LEN_ID;       }
+                  | CAT                                 {$$ = CAT_ID;       }
+                  | PRINT                               {$$ = PRINT_ID;     }
+                  | PROMPT                              {$$ = PROMPT_ID;    }
                   ;
 
 arguments         : 
                   | arguments argument
                   ;
 
-argument          : statement                           {$$ = 0;}
+argument          : statement                       
                   | id                                  {if ((error_flag = get_variable(vars, $1, &arg_type)) != SUCCESS){
                                                             handle_error(error_flag, yylineno);
                                                         }}
-                  | integer                             {$$ = INTEGER_TYPE;}
-                  | string                              {$$ = STRING_TYPE;}
-                  | boolean                             {$$ = BOOLEAN_TYPE;}
-                  | '(' argument ')'                    {$$ = $2;}
+                  | integer                             
+                  | string                             
+                  | boolean                           
+                  | '(' argument ')'                 
                   ;
 
 boolean           : TRUE_VALUE

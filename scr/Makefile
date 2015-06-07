@@ -4,7 +4,7 @@ EXECUTABLE = lpis
 CC = gcc
 
 all: y.tab.c lex.yy.c
-	$(CC) y.tab.c var.c error.c -o $(EXECUTABLE)
+	$(CC) y.tab.c var.c error.c types.c -o $(EXECUTABLE)
 
 lex.yy.c: $(FLEX)
 	flex $(FLEX)
